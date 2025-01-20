@@ -6,56 +6,67 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
 
-def options_data(ticker):
 
+def options_data(ticker):
     asset = yf.Ticker(ticker)
     option_exp_dates = asset.options
     print(option_exp_dates)
+
+    options_chain = pd.DataFrame()
 
     for expiry in option_exp_dates:
         data = asset.option_chain(expiry)
         calls = data.calls
         puts = data.puts
-        print(expiry)
-        print(calls.head())
-        print(puts.head())
+        # print(expiry)
+        # print(calls.head())
+        # print(puts.head())
 
-    return
+        calls['Type'] = "Call"
+        puts['Type'] = "Put"
 
-# options_data('^XSP')
-options_data('SPY')
+        chain = pd.concat([calls, puts])
+        chain['Expiry'] = expiry
+        chain['DaysToExpiry'] = (pd.to_datetime(chain['Expiry']) - dt.datetime.now()).dt.days
 
+        options_chain = pd.concat([options_chain, chain])
 
-
-
-
-
-
-
+    return options_chain
 
 
+options = options_data('SPY')
 
 
+calls = options[options['Type'] == 'Call']
+puts = options[options['Type'] == 'Put']
 
+expiry_date = '2025-01-21'
+calls_at_expiry = calls[calls['Expiry'] == expiry_date]
+print(calls_at_expiry.columns)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if calls_at_expiry.empty:
+    print('No data available for the selected expiry date')
+else:
+    calls_at_expiry.set_index('strike', inplace=True)
+    # calls_at_expiry['IV'] = calls_at_expiry['Implied Volatility'].str.rstrip('%').astype('float') / 100
+    calls_at_expiry['impliedVolatility'].plot(title=f'IV Skew for Call expiring on {expiry_date}')
+    plt.xlabel('Strike')
+    plt.ylabel('Implied Volatility')
+    plt.show()
 
 
 
+
+
+
+
+
+
+
+
+
+
+############################################################################################################
 # # Grid settings
 # S_max = 200  # stock max
 # S_min = 1e-4  # stock min, can't be 0 of pb w/ log()
