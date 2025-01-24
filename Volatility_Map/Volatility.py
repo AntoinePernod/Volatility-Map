@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 matplotlib.use('TkAgg')
 
+
 # Get options data from Yahoo Finance
 def options_data(ticker):
     asset = yf.Ticker(ticker)
