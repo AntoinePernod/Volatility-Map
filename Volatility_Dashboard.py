@@ -116,21 +116,21 @@ def update_graphs(ticker, expiry_date):
 
         calls_surface = calls[['strike', 'DaysToExpiry', 'impliedVolatility']].pivot_table(
             values='impliedVolatility', index='strike', columns='DaysToExpiry').dropna()
-        X_calls, Y_calls = np.meshgrid(calls_surface.columns, calls_surface.index)
+        X_calls, Y_calls = np.meshgrid(calls_surface.index, calls_surface.columns)
         Z_calls = calls_surface.values
 
         calls_fig = go.Figure(data=[go.Surface(z=Z_calls, x=X_calls, y=Y_calls, colorscale='Viridis')])
         calls_fig.update_layout(title="Calls Implied Volatility Surface", scene=dict(
-            xaxis_title="Days to Expiry", yaxis_title="Strike", zaxis_title="Implied Volatility"))
+            xaxis_title="Strike", yaxis_title="Days to Expiry", zaxis_title="Implied Volatility"))
 
         puts_surface = puts[['strike', 'DaysToExpiry', 'impliedVolatility']].pivot_table(
             values='impliedVolatility', index='strike', columns='DaysToExpiry').dropna()
-        X_puts, Y_puts = np.meshgrid(puts_surface.columns, puts_surface.index)
+        X_puts, Y_puts = np.meshgrid(puts_surface.index, puts_surface.columns)
         Z_puts = puts_surface.values
 
         puts_fig = go.Figure(data=[go.Surface(z=Z_puts, x=X_puts, y=Y_puts, colorscale='Plasma')])
         puts_fig.update_layout(title="Puts Implied Volatility Surface", scene=dict(
-            xaxis_title="Days to Expiry", yaxis_title="Strike", zaxis_title="Implied Volatility"))
+            xaxis_title="Strike", yaxis_title="Days to Expiry", zaxis_title="Implied Volatility"))
 
         return skew_fig, calls_fig, puts_fig
 
