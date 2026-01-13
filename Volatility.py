@@ -44,7 +44,7 @@ calls = options[options['Type'] == 'Call']
 puts = options[options['Type'] == 'Put']
 
 # Plotting Volatility Skew
-expiry_date = '2025-08-15'
+expiry_date = '2026-01-16'
 calls_at_expiry = calls[calls['Expiry'] == expiry_date]
 filtered_calls_at_expiry = calls_at_expiry.loc[(calls_at_expiry['impliedVolatility'] >= 0.001) & (calls_at_expiry['strike'] >= spot)]
 puts_at_expiry = puts[puts['Expiry'] == expiry_date]
