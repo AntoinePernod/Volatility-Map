@@ -3,6 +3,11 @@ import pandas as pd
 import datetime as dt
 
 
+def get_histo(ticker, period="1mo", interval="1d"):
+    asset = yf.Ticker(ticker)
+    histo = asset.history(period=period, interval=interval)
+    return histo
+
 
 def options_data(ticker):
     asset = yf.Ticker(ticker)
