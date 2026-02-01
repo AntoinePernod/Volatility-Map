@@ -14,9 +14,9 @@ import feedparser
 ### RSS Feed Parser
 
 feeds = {
-    'Reuters': 'https://www.reuters.com/markets/',
-    'Bloomberg': 'https://www.bloomberg.com/markets',
-    'CNBC': 'https://www.cnbc.com/world-markets/',
+    'Reuters': 'https://www.reuters.com/markets/rss',
+    'Bloomberg': 'https://www.bloomberg.com/markets/rss',
+    'CNBC': 'https://www.cnbc.com/world-markets/rss/',
     'LeMonde': 'https://www.lemonde.fr/international/rss_full.xml'
 }
 
@@ -97,7 +97,7 @@ with col_vol:
     fig1.add_hline(y=vix_mean, line_dash="dash", line_color="red", annotation_text=f"Mean ({vix_mean:.2f})")
     fig1.add_hline(y=vix_data['Close'].quantile(0.25), line_dash='dot', line_color='green', annotation_text='25th Percentile')
     fig1.add_hline(y=vix_data['Close'].quantile(0.75), line_dash='dot', line_color='blue', annotation_text='75th Percentile')
-    fig1.add_hline(y=vix_data['Close'].iloc[-1], line_dash='dot', line_color='orange', annotation_text='Last VIX Value')
+    # fig1.add_hline(y=vix_data['Close'].iloc[-1], line_dash='dot', line_color='orange', annotation_text='Last VIX Value')
     fig1.update_xaxes(title_text='Date')
     fig1.update_yaxes(title_text='VIX Value')
     
@@ -107,7 +107,6 @@ with col_vol:
 
 with news_col:
     st.subheader("🗞️ Market News")
-    st.write("Flux RSS feed ...")
 
     feed = feedparser.parse(feeds['LeMonde'])
     for entry in feed.entries[:5]:
@@ -118,3 +117,30 @@ with news_col:
         st.divider()
 
 st.divider()
+
+st.subheader('💡 Economic Indicators')
+
+econ_col1, econ_col2 = st.columns(2)
+
+with econ_col1:
+    st.write("**US Unemployment Rate**")
+    unemployment_data = pd.read_csv('https://fred.stlouisfed.org/graph/fredgraph.csv?id=UNRATE', parse_dates=['observation_date'])
+    unemployment_data.set_index('observation_date', inplace=True)
+
+    fig2 = go.Figure()
+    fig2.add_trace(go.Scatter(x=unemployment_data.index, y=unemployment_data['UNRATE'], mode='lines', name='Unemployment Rate'))
+    fig2.update_layout(title='US Unemployment Rate Over Time', xaxis_title='Date', yaxis_title='Unemployment Rate (%)')
+    st.plotly_chart(fig2, use_container_width=True)
+
+with econ_col2:
+    st.write("**US GDP Growth Rate**")
+    gdp_data = pd.read_csv('https://fred.stlouisfed.org/graph/fredgraph.csv?id=GDP', parse_dates=['observation_date'])
+    gdp_data.set_index('observation_date', inplace=True)
+
+    fig3 = go.Figure()
+    fig3.add_trace(go.Scatter(x=gdp_data.index, y=gdp_data['GDP'], mode='lines', name='GDP Growth Rate'))
+    fig3.update_layout(title='US GDP Growth Rate Over Time', xaxis_title='Date', yaxis_title='GDP Growth Rate (%)')
+    st.plotly_chart(fig3, use_container_width=True)
+    
+st.divider()
+

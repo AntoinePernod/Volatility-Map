@@ -1,5 +1,7 @@
 import streamlit as st
 import datetime as dt
+import matplotlib.pyplot as plt
+import pandas as pd
 
 import utils.functions as funcs
 
@@ -36,4 +38,16 @@ with col1:
     st.dataframe(merged_iv)
 
     skew_figure = st.line_chart(merged_iv.set_index('percentStrike')['impliedVolatility'], x_label='Strike (%)', y_label='Implied Volatility')
+    
+    
+    
+with col2:
 
+    fig = plt.figure(figsize=(10,4))
+    plt.plot(filtered_calls_at_expiry['percentStrike'], filtered_calls_at_expiry['impliedVolatility'], label='Calls', color='blue')
+    plt.plot(filtered_puts_at_expiry['percentStrike'], filtered_puts_at_expiry['impliedVolatility'], label='Puts', color='orange')
+    plt.xlabel('Strike')
+    plt.ylabel('Implied Volatility')
+    plt.title(f'Implied Volatility Skew for {ticker} Options Expiring on {expiry_selected}')
+    plt.legend()
+    st.pyplot(fig)
